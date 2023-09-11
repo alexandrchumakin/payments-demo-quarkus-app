@@ -1,6 +1,6 @@
 -- This file allow to write SQL commands that will be emitted in test and dev.
 -- The commands are commented as their support depends of the database
--- insert into myentity (id, field) values(1, 'field-1');
--- insert into myentity (id, field) values(2, 'field-2');
--- insert into myentity (id, field) values(3, 'field-3');
--- alter sequence myentity_seq restart with 4;
+insert into userrecord (id, name, password) values(1, 'admin', 'admin');
+insert into userrecord (id, name, password) values(2, 'user', 'user');
+insert into userrecord (id, name, password) values(3, 'john', 'john');
+alter sequence userrecord_seq restart with 4;

@@ -1,4 +1,4 @@
-package org.achumakin;
+package org.achumakin.mock;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import org.testcontainers.containers.PostgreSQLContainer;
