@@ -4,6 +4,20 @@ This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
+## Technical stack
+
+- [Java 17](https://docs.oracle.com/en/java/javase/17/install/overview-jdk-installation.html)
+- [Maven 3.9](https://maven.apache.org/install.html)
+- [Docker 24](https://docs.docker.com/desktop/)
+- [Kubectl 1.28](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html)
+- [Minikube 1.31](https://minikube.sigs.k8s.io/docs/start/)
+
+## App prerequisites
+To run app locally it's required to start a postgres instance separately, e.g. with docker container:
+```shell
+docker run --name my-postgres-container -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=payments -d -p 5432:5432 postgres:15.4
+```
+
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:
@@ -12,6 +26,60 @@ You can run your application in dev mode that enables live coding using:
 ```
 
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+
+## Access application
+All endpoints require basic authorization. 
+For testing purpose we have a few users automatically pre-configured. 
+
+### Create new payment
+```shell
+curl --location 'http://localhost:8080/payments' \
+--header 'Authorization: Basic am9objpqb2hu' \
+--header 'Content-Type: application/json' \
+--data '{
+    "amount": 11.13, 
+    "currency": "USD", 
+    "name": "Test Consumer"
+  }'
+```
+### Get all payments
+```shell
+curl  --header 'Authorization: Basic am9objpqb2hu' http://localhost:8080/payments
+```
+
+### Delete payment by id
+```shell
+curl --head --header 'Authorization: Basic am9objpqb2hu' -X DELETE http://localhost:8080/payments/{id}
+```
+
+## Running in Kubernetes cluster
+For a testing purpose, there are shell [scripts](scripts) to work with the app in a kubernetes cluster using `minikube`.
+
+Please, refer to requirements for installation guidance. 
+
+### Run minikube cluster
+`chmod +x scripts/*` (required only once)
+
+```shell
+./scripts/start-minikube.sh
+```
+
+### Access pod via localhost
+First, find application's pod name with:
+`kubectl get pods`
+
+Then, forward its port via:
+`kubectl port-forward ${container-name} 8080:8080`
+
+### Stop minikube cluster
+```shell
+./scripts/stop-minikube.sh
+```
+
+### Troubleshoot
+
+You can check app logs in minikube with: `kubectl logs deployments/payments-demo-quarkus-app`
+
 
 ## Packaging and running the application
 
