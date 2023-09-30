@@ -71,6 +71,17 @@ First, find application's pod name with:
 Then, forward its port via:
 `kubectl port-forward ${container-name} 8080:8080`
 
+### Access app via ingress
+After minikube cluster is started, just run in any terminal (and leave it running while you want to use ingress)
+```shell
+minikube tunnel 
+```
+Then, you can access service via [http://payments-app.com](http://payments-app.com),
+e.g. 
+```shell
+curl --header 'Authorization: Basic am9objpqb2hu' http://payments-app.com/payments
+```
+
 ### Stop minikube cluster
 ```shell
 ./scripts/stop-minikube.sh
