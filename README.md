@@ -87,6 +87,11 @@ curl --header 'Authorization: Basic am9objpqb2hu' http://payments-app.com/paymen
 ./scripts/stop-minikube.sh
 ```
 
+### Re-deploy new version of app
+```shell
+./scripts/re-deploy.sh
+```
+
 ### Troubleshoot
 
 You can check app logs in minikube with: `kubectl logs deployments/payments-demo-quarkus-app`
