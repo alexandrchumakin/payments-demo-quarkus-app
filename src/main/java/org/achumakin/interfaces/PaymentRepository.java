@@ -1,7 +1,7 @@
 package org.achumakin.interfaces;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import org.achumakin.entities.PaymentRecord;
 
-public interface PaymentRepository extends PanacheRepository<PaymentRecord> {
+public interface PaymentRepository extends PanacheRepositoryBase<PaymentRecord, String> {
 }

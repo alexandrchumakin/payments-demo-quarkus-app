@@ -4,6 +4,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
+import io.restassured.response.ValidatableResponse;
 import jakarta.inject.Inject;
 import org.achumakin.entities.PaymentRecord;
 import org.achumakin.mock.DatabaseTestResource;
@@ -12,6 +13,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
 
 @QuarkusTest
 @Testcontainers
@@ -25,64 +28,49 @@ public class PaymentsTest {
     private static final Header authHeader = new Header("Authorization", "Basic dXNlcjp1c2Vy");
 
     @Test
-    public void getAllPayments() {
-        given()
-                .header(authHeader)
-                .when()
-                .get("/payments")
-                .then()
-                .statusCode(200)
-                .body(is("[]"));
-    }
-
-    @Test
-    public void testCreatePayment() {
+    public void testPaymentCRUD() {
         var payment = new PaymentRecord();
         payment.setAmount(11.13);
         payment.setCurrency("USD");
         payment.setName("admin");
 
-        given()
+        var createdPayment = given()
                 .header(authHeader)
                 .contentType(ContentType.JSON)
                 .body(payment)
                 .when()
                 .post("/payments")
                 .then()
-                .statusCode(201);
-    }
-
-    @Test
-    public void testUpdatePayment() {
-        // Assuming you have an existing payment with ID 1
-        Long paymentId = 1L;
-
-        var updatedPayment = new PaymentRecord();
-        updatedPayment.setAmount(11.12);
-        updatedPayment.setCurrency("USD");
-        updatedPayment.setName("admin");
-
+                .statusCode(201)
+                .extract()
+                .body()
+                .as(PaymentRecord.class);
+        payment.setAmount(24.16);
+        getPayments().body("", hasSize(greaterThan(0)));
         given()
                 .header(authHeader)
                 .contentType(ContentType.JSON)
-                .body(updatedPayment)
+                .body(createdPayment)
                 .when()
-                .put("/payments/{id}", paymentId)
+                .put("/payments/{id}", createdPayment.getId())
                 .then()
                 .statusCode(200);
-    }
-
-    @Test
-    public void testDeletePayment() {
-        // Assuming you have an existing payment with ID 1
-        var paymentId = 1L;
-
         given()
                 .header(authHeader)
                 .when()
-                .delete("/payments/{id}", paymentId)
+                .delete("/payments/{id}", createdPayment.getId())
                 .then()
                 .statusCode(204);
+        getPayments().body(is("[]"));
+    }
+
+    private ValidatableResponse getPayments() {
+        return given()
+                .header(authHeader)
+                .when()
+                .get("/payments")
+                .then()
+                .statusCode(200);
     }
 
 }

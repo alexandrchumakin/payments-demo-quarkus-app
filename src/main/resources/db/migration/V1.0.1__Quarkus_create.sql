@@ -1,6 +1,6 @@
 CREATE SEQUENCE paymentrecord_seq;
 CREATE TABLE paymentrecord (
-   id serial PRIMARY KEY,
+   id UUID PRIMARY KEY,
    amount numeric(10, 2),
    currency varchar,
    name varchar

@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.achumakin</groupId>
   <artifactId>payments-demo-quarkus-app</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.2</version>
   <properties>
     <cargo-core-api-container.version>1.10.9</cargo-core-api-container.version>
     <compiler-plugin.version>3.11.0</compiler-plugin.version>

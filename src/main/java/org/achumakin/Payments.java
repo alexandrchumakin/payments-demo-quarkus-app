@@ -16,6 +16,7 @@ import org.achumakin.data.PaymentRepositoryImpl;
 import org.achumakin.entities.PaymentRecord;
 
 import java.util.List;
+import java.util.UUID;
 
 @Path("/payments")
 @Produces("application/json")
@@ -32,7 +33,7 @@ public class Payments {
 
     @GET
     @Path("/{id}")
-    public Response getPaymentById(@PathParam("id") Long id) {
+    public Response getPaymentById(@PathParam("id") UUID id) {
         var payment = paymentRepository.findById(id);
         if (payment != null) {
             return Response.ok(payment).build();
@@ -44,19 +45,20 @@ public class Payments {
     @POST
     @Transactional
     public Response createPayment(@Valid PaymentRecord payment) {
-        paymentRepository.persist(payment);
+        paymentRepository.persistAndFlush(payment);
         return Response.status(Response.Status.CREATED).entity(payment).build();
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response updatePayment(@PathParam("id") Long id, @Valid PaymentRecord updatedPayment) {
+    public Response updatePayment(@PathParam("id") UUID id, @Valid PaymentRecord updatedPayment) {
         var existingPayment = paymentRepository.findById(id);
         if (existingPayment != null) {
             existingPayment.setAmount(updatedPayment.getAmount());
             existingPayment.setCurrency(updatedPayment.getCurrency());
             existingPayment.setName(updatedPayment.getName());
+            paymentRepository.persist(existingPayment);
             return Response.status(Response.Status.OK).entity(existingPayment).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -66,7 +68,7 @@ public class Payments {
     @DELETE
     @Path("/{id}")
     @Transactional
-    public Response deletePayment(@PathParam("id") Long id) {
+    public Response deletePayment(@PathParam("id") UUID id) {
         var existingPayment = paymentRepository.findById(id);
         if (existingPayment != null) {
             paymentRepository.delete(existingPayment);
